@@ -11,5 +11,11 @@
     "name": "annefou/weatherxbiodiversity",
     "version": "v0.2.1",
     "concept_doi": "10.5281/zenodo.19756173"
+  },
+  "cross_substrate_reference": {
+    "name": "annefou/weatherxbiodiversity-projection",
+    "commit": "b7cdd47",
+    "substrate": "HEALPix nside=64 NESTED (WGS84)",
+    "framing": "Internal cross-substrate reference for this nside=128 fit. The reference repo runs the same pipeline at nside=64 (~92 km cells)."
   }
 }

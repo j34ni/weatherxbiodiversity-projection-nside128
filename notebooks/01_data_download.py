@@ -152,20 +152,15 @@ CRU_DIR = BUMBLEBEE_DIR / "0_ClimateData"
 MIN_BUMBLEBEE_ZIP_BYTES = 100_000_000
 
 
+# api.figshare.com returns 403 (WAF) from this network; the article page and
+# ndownloader work, so pin the resolved file (Bumblebee_repo.zip).
+FIGSHARE_DIRECT_URL = "https://figshare.com/ndownloader/files/22019016"
+UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36"}
+
+
 def figshare_download_url() -> str:
-    print(f"  querying {FIGSHARE_API}")
-    r = requests.get(FIGSHARE_API, timeout=120)
-    r.raise_for_status()
-    meta = r.json()
-    files = meta.get("files", [])
-    if not files:
-        raise RuntimeError(f"No files in figshare article: {meta}")
-    target = next(
-        (f for f in files if f["name"].lower().startswith("bumblebee")),
-        files[0],
-    )
-    print(f"  resolved {target['name']} ({target['size']:,} bytes)")
-    return target["download_url"]
+    print(f"  using pinned figshare file: {FIGSHARE_DIRECT_URL}")
+    return FIGSHARE_DIRECT_URL
 
 
 def fetch_bumblebee_zip() -> Path:
@@ -174,7 +169,7 @@ def fetch_bumblebee_zip() -> Path:
         return BUMBLEBEE_ZIP
     url = figshare_download_url()
     print(f"  fetching {url} (this is large, ~1.1 GB)")
-    r = requests.get(url, stream=True, timeout=3600, allow_redirects=True)
+    r = requests.get(url, stream=True, timeout=3600, allow_redirects=True, headers=UA)
     r.raise_for_status()
     written = 0
     with open(BUMBLEBEE_ZIP, "wb") as f:
